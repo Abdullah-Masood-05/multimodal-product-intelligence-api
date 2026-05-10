@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import analyze, search, catalog
+from routers import analyze, search, catalog, campaign, simulator
 
 app = FastAPI(title="ProductIQ API", version="1.0.0")
 
@@ -15,6 +15,8 @@ app.add_middleware(
 app.include_router(analyze.router)
 app.include_router(search.router)
 app.include_router(catalog.router)
+app.include_router(campaign.router)
+app.include_router(simulator.router)
 
 @app.get("/")
 async def root():
