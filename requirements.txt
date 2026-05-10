@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+python-multipart
+groq
+torch
+torchvision
+transformers
+qdrant-client
+Pillow
+python-dotenv
+pydantic
+pydantic-settings
+aiofiles
+httpx
