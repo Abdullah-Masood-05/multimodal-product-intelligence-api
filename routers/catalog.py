@@ -7,12 +7,14 @@ router = APIRouter()
 @router.get("/api/catalog")
 async def get_catalog(limit: int = 20):
     try:
-        results, _ = vector_store.client.scroll(
+        scroll_result = vector_store.client.scroll(
             collection_name=vector_store.collection_name,
             limit=limit,
             with_payload=True,
             with_vectors=False,
         )
+        # v1.7+ returns a ScrollResult object or a tuple (points, next_offset)
+        results = scroll_result[0] if isinstance(scroll_result, tuple) else scroll_result.points
     except Exception:
         results = []
 
