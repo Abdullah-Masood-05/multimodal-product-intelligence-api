@@ -1,8 +1,10 @@
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct
+from qdrant_client.models import Distance, VectorParams, PointStruct, Query
 from config import settings
 import uuid
 import json
+
+DUPLICATE_THRESHOLD = 0.92
 
 class VectorStore:
     def __init__(self):
@@ -23,7 +25,7 @@ class VectorStore:
         payload = {"listing": json.dumps(listing)}
         if image_base64:
             payload["image_base64"] = image_base64
-            
+
         self.client.upsert(
             collection_name=self.collection_name,
             points=[
@@ -37,11 +39,17 @@ class VectorStore:
         return point_id
 
     def search_similar(self, query_embedding: list[float], limit: int = 5):
-        results = self.client.search(
+        """Search for similar vectors using the new query_points API (qdrant-client v1.7+)."""
+        results = self.client.query_points(
             collection_name=self.collection_name,
-            query_vector=query_embedding,
-            limit=limit
+            query=query_embedding,
+            limit=limit,
+            with_payload=True,
         )
-        return results
+        return results.points
+
+    def count(self) -> int:
+        """Return total number of indexed products."""
+        return self.client.count(collection_name=self.collection_name).count
 
 vector_store = VectorStore()
