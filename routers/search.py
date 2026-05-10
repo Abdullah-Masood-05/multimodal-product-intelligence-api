@@ -22,6 +22,7 @@ async def search(query: SearchQuery):
         items.append({
             "id": hit.id,
             "score": hit.score,
+            "is_duplicate": hit.score > 0.92,
             "listing": listing,
             "image_base64": payload.get("image_base64")
         })
